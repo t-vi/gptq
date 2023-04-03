@@ -131,7 +131,12 @@ class Quantizer(nn.Module):
 try:
     import quant_cuda
 except:
-    print('CUDA extension not installed.')
+    print('CUDA extension not installed compiling on the fly.')
+    import torch.utils.cpp_extension
+    import os.path
+    src_dir = os.path.dirname(__file__)
+    quant_cuda = torch.utils.cpp_extension.load("quant_cuda", [os.path.join(src_dir, 'quant_cuda.cpp'), os.path.join(src_dir, 'quant_cuda_kernel.cu')])
+    print('done')
 
 # Assumes layer is perfectly divisible into 1024 * 1024 blocks
 class Quant3Linear(nn.Module): 
